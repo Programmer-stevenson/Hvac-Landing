@@ -114,11 +114,15 @@ function Header() {
 
 // HERO - Clean hero with image, CTA buttons only
 function Hero() {
-  const [showText, setShowText] = useState(true)
-  const [isMobile, setIsMobile] = useState(false)
+  const [showText, setShowText] = useState(false) // Start with text hidden
+  const [isMobile, setIsMobile] = useState(true) // Assume mobile first
 
   useEffect(() => {
-    const checkMobile = () => setIsMobile(window.innerWidth < 640)
+    const checkMobile = () => {
+      const mobile = window.innerWidth < 640
+      setIsMobile(mobile)
+      if (!mobile) setShowText(true) // Show immediately on desktop
+    }
     checkMobile()
     window.addEventListener('resize', checkMobile)
     return () => window.removeEventListener('resize', checkMobile)
@@ -159,7 +163,7 @@ function Hero() {
         <div className="max-w-2xl">
           {/* Text that fades on mobile */}
           <motion.div
-            initial={{ opacity: 1 }}
+            initial={{ opacity: 0 }}
             animate={{ opacity: isMobile ? (showText ? 1 : 0) : 1 }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
           >
@@ -191,7 +195,8 @@ function Hero() {
           {/* CTA Buttons - move down when text hides on mobile */}
           <motion.div 
             className="flex flex-col sm:flex-row gap-4 mb-10"
-            animate={{ y: isMobile ? (showText ? 0 : 150) : 0 }}
+            initial={{ y: 180 }}
+            animate={{ y: isMobile ? (showText ? 0 : 270) : 0 }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
           >
             <motion.a
@@ -216,6 +221,7 @@ function Hero() {
 
           {/* Trust signals - also fade on mobile */}
           <motion.div
+            initial={{ opacity: 0 }}
             animate={{ opacity: isMobile ? (showText ? 1 : 0) : 1 }}
             transition={{ duration: 0.5, ease: 'easeInOut' }}
           >
