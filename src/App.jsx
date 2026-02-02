@@ -699,7 +699,7 @@ function Trust() {
             className="text-center"
           >
             <p className="text-5xl sm:text-6xl font-black text-white mb-2">
-              <Counter target="15000" suffix="+" />
+              <Counter target="100" suffix="+" />
             </p>
             <p className="text-white/60">Jobs Completed</p>
           </motion.div>
