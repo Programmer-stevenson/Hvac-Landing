@@ -144,7 +144,7 @@ function Hero() {
         <img
           src="/hero.png"
           alt="HVAC Professionals"
-          className="w-full h-full object-cover object-right sm:object-center"
+          className="w-full h-full object-cover object-[calc(100%+35px)_center] sm:object-center"
         />
       </div>
 
