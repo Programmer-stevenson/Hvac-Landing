@@ -114,8 +114,31 @@ function Header() {
 
 // HERO - Clean hero with image, CTA buttons only
 function Hero() {
+  const [showText, setShowText] = useState(true)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const checkMobile = () => setIsMobile(window.innerWidth < 640)
+    checkMobile()
+    window.addEventListener('resize', checkMobile)
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
+
+  useEffect(() => {
+    if (!isMobile) return
+    
+    const showDuration = 8000 // text visible for 8 seconds
+    const hideDuration = 5000 // text hidden for 5 seconds
+    
+    const timeout = setTimeout(() => {
+      setShowText(prev => !prev)
+    }, showText ? showDuration : hideDuration)
+    
+    return () => clearTimeout(timeout)
+  }, [isMobile, showText])
+
   return (
-    <section className="relative min-h-screen flex items-start sm:items-center overflow-hidden">
+    <section className="relative min-h-screen flex items-end sm:items-center overflow-hidden">
       {/* Background */}
       <div className="absolute inset-0">
         <img
@@ -123,8 +146,6 @@ function Hero() {
           alt="HVAC Professionals"
           className="w-full h-full object-cover object-right sm:object-center"
         />
-        <div className="absolute inset-0  />
-        <div className="absolute inset-0  />
       </div>
 
       {/* Floating elements */}
@@ -134,44 +155,45 @@ function Hero() {
         transition={{ duration: 8, repeat: Infinity }}
       />
 
-      <div className="relative z-10 max-w-6xl mx-auto px-4 pt-32 pb-24 sm:py-24 w-full">
-        <motion.div
-          initial={{ opacity: 0, y: 30 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.7 }}
-          className="max-w-2xl"
-        >
-          {/* Urgency badge */}
+      <div className="relative z-10 max-w-6xl mx-auto px-4 pb-12 pt-24 sm:py-24 w-full">
+        <div className="max-w-2xl">
+          {/* Text that fades on mobile */}
           <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-            className="inline-flex items-center gap-2 bg-red-500/20 border border-red-500/30 rounded-full px-4 py-2 mb-5"
+            initial={{ opacity: 1 }}
+            animate={{ opacity: isMobile ? (showText ? 1 : 0) : 1 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
           >
-            <motion.div
-              animate={{ scale: [1, 1.2, 1] }}
-              transition={{ duration: 1, repeat: Infinity }}
-            >
-              <AlertCircle className="w-5 h-5 text-red-400" />
-            </motion.div>
-            <span className="text-red-300 font-semibold text-sm">Limited Time: $50 OFF Any Service</span>
+            {/* Urgency badge */}
+            <div className="inline-flex items-center gap-2 bg-red-500/20 border border-red-500/30 rounded-full px-4 py-2 mb-5">
+              <motion.div
+                animate={{ scale: [1, 1.2, 1] }}
+                transition={{ duration: 1, repeat: Infinity }}
+              >
+                <AlertCircle className="w-5 h-5 text-red-400" />
+              </motion.div>
+              <span className="text-red-300 font-semibold text-sm">Limited Time: $50 OFF Any Service</span>
+            </div>
+
+            <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.1] mb-5 sm:mb-6">
+              AC Broken?
+              <br />
+              <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400">
+                We'll Fix It Today.
+              </span>
+            </h1>
+
+            <p className="text-lg sm:text-2xl text-white/80 mb-6 sm:mb-8 leading-relaxed">
+              Fast, reliable HVAC repair & installation. 
+              <span className="text-white font-semibold"> Same-day service available.</span>
+            </p>
           </motion.div>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-7xl font-black text-white leading-[1.1] mb-5 sm:mb-6">
-            AC Broken?
-            <br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-yellow-400">
-              We'll Fix It Today.
-            </span>
-          </h1>
-
-          <p className="text-lg sm:text-2xl text-white/80 mb-6 sm:mb-8 leading-relaxed">
-            Fast, reliable HVAC repair & installation. 
-            <span className="text-white font-semibold"> Same-day service available.</span>
-          </p>
-
-          {/* CTA Buttons */}
-          <div className="flex flex-col sm:flex-row gap-4 mb-10">
+          {/* CTA Buttons - move down when text hides on mobile */}
+          <motion.div 
+            className="flex flex-col sm:flex-row gap-4 mb-10"
+            animate={{ y: isMobile ? (showText ? 0 : 150) : 0 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          >
             <motion.a
               href="#form"
               whileHover={{ scale: 1.05 }}
@@ -190,75 +212,69 @@ function Hero() {
               <Phone className="w-6 h-6" />
               (123) 456-7890
             </motion.a>
-          </div>
+          </motion.div>
 
-          {/* Trust signals */}
-          <div className="flex flex-wrap gap-6 mb-8">
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
-                <Timer className="w-5 h-5 text-green-400" />
-              </div>
-              <div>
-                <p className="text-white font-bold">2 Hour</p>
-                <p className="text-white/60 text-sm">Response Time</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
-                <Shield className="w-5 h-5 text-blue-400" />
-              </div>
-              <div>
-                <p className="text-white font-bold">100%</p>
-                <p className="text-white/60 text-sm">Satisfaction</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-2">
-              <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
-                <Star className="w-5 h-5 text-yellow-400" />
-              </div>
-              <div>
-                <p className="text-white font-bold">500+</p>
-                <p className="text-white/60 text-sm">5-Star Reviews</p>
-              </div>
-            </div>
-          </div>
-
-          {/* Social proof */}
-          <div className="inline-flex items-center gap-4 p-4 bg-white/10 backdrop-blur rounded-2xl border border-white/10">
-            <div className="flex -space-x-3">
-              {['M', 'S', 'R', 'J'].map((letter, i) => (
-                <div
-                  key={i}
-                  className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center border-2 border-slate-900 text-white font-bold text-sm"
-                >
-                  {letter}
+          {/* Trust signals - also fade on mobile */}
+          <motion.div
+            animate={{ opacity: isMobile ? (showText ? 1 : 0) : 1 }}
+            transition={{ duration: 0.5, ease: 'easeInOut' }}
+          >
+            <div className="flex flex-wrap gap-6 mb-8">
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-full bg-green-500/20 flex items-center justify-center">
+                  <Timer className="w-5 h-5 text-green-400" />
                 </div>
-              ))}
+                <div>
+                  <p className="text-white font-bold">2 Hour</p>
+                  <p className="text-white/60 text-sm">Response Time</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-full bg-blue-500/20 flex items-center justify-center">
+                  <Shield className="w-5 h-5 text-blue-400" />
+                </div>
+                <div>
+                  <p className="text-white font-bold">100%</p>
+                  <p className="text-white/60 text-sm">Satisfaction</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <div className="w-10 h-10 rounded-full bg-yellow-500/20 flex items-center justify-center">
+                  <Star className="w-5 h-5 text-yellow-400" />
+                </div>
+                <div>
+                  <p className="text-white font-bold">500+</p>
+                  <p className="text-white/60 text-sm">5-Star Reviews</p>
+                </div>
+              </div>
             </div>
-            <div>
-              <div className="flex gap-0.5">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+
+            {/* Social proof */}
+            <div className="inline-flex items-center gap-4 p-4 bg-white/10 backdrop-blur rounded-2xl border border-white/10">
+              <div className="flex -space-x-3">
+                {['M', 'S', 'R', 'J'].map((letter, i) => (
+                  <div
+                    key={i}
+                    className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-blue-600 flex items-center justify-center border-2 border-slate-900 text-white font-bold text-sm"
+                  >
+                    {letter}
+                  </div>
                 ))}
               </div>
-              <p className="text-white/70 text-sm">
-                <span className="text-white font-semibold">2,847 homeowners</span> served this year
-              </p>
+              <div>
+                <div className="flex gap-0.5">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-4 h-4 text-yellow-400 fill-yellow-400" />
+                  ))}
+                </div>
+                <p className="text-white/70 text-sm">
+                  <span className="text-white font-semibold">2,847 homeowners</span> served this year
+                </p>
+              </div>
             </div>
-          </div>
-        </motion.div>
-      </div>
-
-      {/* Scroll indicator */}
-      <motion.div
-        className="absolute bottom-8 left-1/2 -translate-x-1/2"
-        animate={{ y: [0, 10, 0] }}
-        transition={{ duration: 2, repeat: Infinity }}
-      >
-        <div className="w-8 h-12 rounded-full border-2 border-white/30 flex items-start justify-center p-2">
-          <div className="w-1.5 h-3 bg-white/50 rounded-full" />
+          </motion.div>
         </div>
-      </motion.div>
+      </div>
     </section>
   )
 }
